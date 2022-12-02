@@ -2,7 +2,7 @@ from typing import List, Dict, Tuple
 import pathlib
 import sys
 
-SHAPE_SCORE_MAP: Dict[str, int] = {
+SHAPE_SCORE_MAP_PART_1: Dict[str, int] = {
     "A": 1,  # Rock
     "B": 2,  # Paper
     "C": 3,  # Scissors
@@ -11,7 +11,7 @@ SHAPE_SCORE_MAP: Dict[str, int] = {
     "Z": 3,  # Scissors
 }
 
-OUTCOME_SCORE_MAP: Dict[Tuple[str, str], int] = {
+OUTCOME_SCORE_MAP_PART_1: Dict[Tuple[str, str], int] = {
     ("A", "X"): 3,  # draw
     ("A", "Y"): 6,  # won
     ("A", "Z"): 0,  # lost
@@ -21,6 +21,18 @@ OUTCOME_SCORE_MAP: Dict[Tuple[str, str], int] = {
     ("C", "X"): 6,  # won
     ("C", "Y"): 0,  # lost
     ("C", "Z"): 3,  # draw
+}
+
+OUTCOME_SCORE_MAP_PART_2: Dict[Tuple[str, str], Tuple[str, int]] = {
+    ("A", "X"): ("C", 0),  # lost
+    ("A", "Y"): ("A", 3),  # draw
+    ("A", "Z"): ("B", 6),  # won
+    ("B", "X"): ("A", 0),  # lost
+    ("B", "Y"): ("B", 3),  # draw
+    ("B", "Z"): ("C", 6),  # won
+    ("C", "X"): ("B", 0),  # lost
+    ("C", "Y"): ("C", 3),  # draw
+    ("C", "Z"): ("A", 6),  # won
 }
 
 
@@ -44,7 +56,9 @@ def solve_part_1(puzzle_input: str) -> int:
     data: List[Tuple[str, str]] = parse_input(puzzle_input)
     total_score: int = 0
     for round in data:
-        total_score += OUTCOME_SCORE_MAP[round] + SHAPE_SCORE_MAP[round[1]]
+        total_score += (
+            OUTCOME_SCORE_MAP_PART_1[round] + SHAPE_SCORE_MAP_PART_1[round[1]]
+        )
 
     return total_score
 
@@ -53,8 +67,15 @@ def solve_part_2(puzzle_input: str) -> int:
     """
     Solve part 2:
     """
+    data: List[Tuple[str, str]] = parse_input(puzzle_input)
+    total_score: int = 0
+    for round in data:
+        total_score += (
+            OUTCOME_SCORE_MAP_PART_2[round][1]
+            + SHAPE_SCORE_MAP_PART_1[OUTCOME_SCORE_MAP_PART_2[round][0]]
+        )
 
-    return 0
+    return total_score
 
 
 def solve_puzzle(puzzle_input):
