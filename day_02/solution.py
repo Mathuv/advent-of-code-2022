@@ -53,6 +53,7 @@ def solve_part_1(puzzle_input: str) -> int:
     What would your total score be
     if everything goes exactly according to your strategy guide?
     """
+
     data: List[Tuple[str, str]] = parse_input(puzzle_input)
     total_score: int = 0
     for round in data:
@@ -66,7 +67,10 @@ def solve_part_1(puzzle_input: str) -> int:
 def solve_part_2(puzzle_input: str) -> int:
     """
     Solve part 2:
+    Following the Elf's instructions for the second column,
+    what would your total score be if everything goes exactly according to your strategy guide?
     """
+
     data: List[Tuple[str, str]] = parse_input(puzzle_input)
     total_score: int = 0
     for round in data:
