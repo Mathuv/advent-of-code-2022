@@ -19,7 +19,8 @@ def parse_input(puzzle_input: str) -> List[List[str]]:
 def solve_part_1(data: List[List[str]]) -> int:
     """
     Solve part 1:
-    Find the Elf carrying the most Calories. How many total Calories is that Elf carrying?
+    Find the Elf carrying the most Calories.
+    How many total Calories is that Elf carrying?
     """
     total_calories_of_each_elf: List[int] = []
     total_calories_of_each_elf = list(map(lambda x: sum(int(i) for i in x), data))
@@ -28,9 +29,19 @@ def solve_part_1(data: List[List[str]]) -> int:
 
 
 def solve_part_2(data: List[List[str]]) -> int:
-    """Solve part 2."""
+    """
+    Solve part 2:
+    Find the top three Elves carrying the most Calories.
+    How many Calories are those Elves carrying in total?
+    """
 
-    return 0
+    total_calories_of_each_elf: List[int] = []
+    # Find the total calories of each elf
+    total_calories_of_each_elf = list(map(lambda x: sum(int(i) for i in x), data))
+    # Sort the list in descending order
+    total_calories_of_each_elf.sort(reverse=True)
+
+    return sum(total_calories_of_each_elf[:3])
 
 
 def solve_puzzle(puzzle_input):
