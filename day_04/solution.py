@@ -1,4 +1,4 @@
-from typing import List, Tuple
+from typing import List
 import pathlib
 import sys
 
@@ -49,13 +49,16 @@ def solve_part_1(puzzle_input: str) -> int:
 def solve_part_2(puzzle_input: str) -> int:
     """
     Solve part 2:
+    In how many assignment pairs do the ranges overlap?.
     """
 
-    data: List[Tuple[str, str]] = parse_input(puzzle_input)
+    data: List[List[str]] = parse_input(puzzle_input)
     total_score: int = 0
     # Calculate the total score
-    for i in data:
-        pass
+    for pair in data:
+        # check if pairs intersect
+        if set(pair[0]).intersection(set(pair[1])):
+            total_score += 1
 
     return total_score
 

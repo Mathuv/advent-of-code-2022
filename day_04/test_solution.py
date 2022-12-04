@@ -50,7 +50,6 @@ def test_part_1_example(example_data):
     assert sol.solve_part_1(example_data) == 2
 
 
-@pytest.mark.skip(reason="Not implemented yet")
 def test_part_2_example(example_data):
     """Test part 2 of the puzzle using the data example."""
-    assert sol.solve_part_2(example_data) == ...
+    assert sol.solve_part_2(example_data) == 4
