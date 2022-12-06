@@ -1,4 +1,3 @@
-from typing import List, Tuple
 import pathlib
 import sys
 
@@ -6,10 +5,17 @@ import sys
 def parse_input(puzzle_input: str) -> str:
     """Parse input data."""
 
-    # strip the input
-    puzzle_input = puzzle_input.strip()
+    return puzzle_input.strip()
 
-    return puzzle_input
+
+def find_char_position(data: str, n: int = 4) -> int:
+    """find char_pos after first occurence of n unique chars occurs."""
+    char_pos: int = 0
+    for i in range(len(data)):
+        if len(set(data[i : i + n])) == n:
+            char_pos = i + n
+            break
+    return char_pos
 
 
 def solve_part_1(puzzle_input: str) -> int:
@@ -20,15 +26,7 @@ def solve_part_1(puzzle_input: str) -> int:
     """
 
     data: str = parse_input(puzzle_input)
-    char_pos: int = 0
-
-    # find char_pos after first occurence of 4 unique chars occurs.
-    for i in range(len(data)):
-        if len(set(data[i : i + 4])) == 4:
-            char_pos = i + 4
-            break
-
-    return char_pos
+    return find_char_position(data, 4)
 
 
 def solve_part_2(puzzle_input: str) -> int:
@@ -37,17 +35,9 @@ def solve_part_2(puzzle_input: str) -> int:
     How many characters need to be processed
     before the first start-of-message marker is detected?
     """
-
     data: str = parse_input(puzzle_input)
-    char_pos: int = 0
 
-    # find char_pos after first occurence of 14 unique chars occurs.
-    for i in range(len(data)):
-        if len(set(data[i : i + 14])) == 14:
-            char_pos = i + 14
-            break
-
-    return char_pos
+    return find_char_position(data, 14)
 
 
 def solve_puzzle(puzzle_input):

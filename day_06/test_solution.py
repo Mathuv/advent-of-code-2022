@@ -9,9 +9,7 @@ PUZZLE_DIR = pathlib.Path(__file__).parent
 @pytest.fixture
 def example_data():
     """Example data."""
-    puzzle_input = (PUZZLE_DIR / "example.txt").read_text().strip()
-
-    return puzzle_input
+    return (PUZZLE_DIR / "example.txt").read_text().strip()
 
 
 def test_parse_example(example_data):
