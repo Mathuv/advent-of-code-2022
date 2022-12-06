@@ -34,15 +34,20 @@ def solve_part_1(puzzle_input: str) -> int:
 def solve_part_2(puzzle_input: str) -> int:
     """
     Solve part 2:
+    How many characters need to be processed
+    before the first start-of-message marker is detected?
     """
 
-    data: List[Tuple[str, str]] = parse_input(puzzle_input)
-    total_score: int = 0
-    # Calculate the total score
-    for i in data:
-        pass
+    data: str = parse_input(puzzle_input)
+    char_pos: int = 0
 
-    return total_score
+    # find char_pos after first occurence of 14 unique chars occurs.
+    for i in range(len(data)):
+        if len(set(data[i : i + 14])) == 14:
+            char_pos = i + 14
+            break
+
+    return char_pos
 
 
 def solve_puzzle(puzzle_input):
