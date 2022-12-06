@@ -6,12 +6,10 @@ import sys
 def parse_input(puzzle_input: str) -> List[List[str]]:
     """Parse input data."""
 
-    data: List[List[str]] = []
     # Split the text into list of paragraphs
     paragraphs: List[str] = puzzle_input.split("\n\n")
     # Split each paragraph into list of lines
-    for paragraph in paragraphs:
-        data.append(paragraph.splitlines())
+    data: List[List[str]] = [paragraph.splitlines() for paragraph in paragraphs]
 
     return data
 
@@ -22,8 +20,10 @@ def solve_part_1(data: List[List[str]]) -> int:
     Find the Elf carrying the most Calories.
     How many total Calories is that Elf carrying?
     """
-    total_calories_of_each_elf: List[int] = []
-    total_calories_of_each_elf = list(map(lambda x: sum(int(i) for i in x), data))
+    # total_calories_of_each_elf: List[int] = []
+    total_calories_of_each_elf: List[int] = list(
+        map(lambda x: sum(int(i) for i in x), data)
+    )
 
     return max(total_calories_of_each_elf)
 
@@ -35,9 +35,10 @@ def solve_part_2(data: List[List[str]]) -> int:
     How many Calories are those Elves carrying in total?
     """
 
-    total_calories_of_each_elf: List[int] = []
     # Find the total calories of each elf
-    total_calories_of_each_elf = list(map(lambda x: sum(int(i) for i in x), data))
+    total_calories_of_each_elf: List[int] = list(
+        map(lambda x: sum(int(i) for i in x), data)
+    )
     # Sort the list in descending order
     total_calories_of_each_elf.sort(reverse=True)
 
