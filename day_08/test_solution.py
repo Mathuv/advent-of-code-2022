@@ -28,7 +28,6 @@ def test_parse_example(example_data):
     assert np.array_equal(parsed_data, matrix)
 
 
-@pytest.mark.skip(reason="Not implemented yet")
 def test_part_1_example(example_data):
     """Test part 1 of the puzzle using the data example."""
     assert sol.solve_part_1(example_data) == 21
