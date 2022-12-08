@@ -4,6 +4,9 @@ from typing import Any, Dict, Generator, List, Tuple
 
 from dir_tree import Dir, File
 
+TOTAL_DISK_SPACE = 70000000
+REQUIRED_UNUSED_SPACE = 30000000
+
 
 class recursionlimit:
     def __init__(self, limit):
@@ -111,15 +114,22 @@ def solve_part_1(puzzle_input: str) -> int:
 def solve_part_2(puzzle_input: str) -> int:
     """
     Solve part 2:
+    Find the smallest directory that, if deleted,
+    would free up enough space on the filesystem to run the update.
+    What is the total size of that directory?
     """
 
-    data: List[Tuple[str, str]] = parse_input(puzzle_input)
-    total_score: int = 0
-    # Calculate the total score
-    for i in data:
-        pass
+    data: List[str] = parse_input(puzzle_input)
+    dir_file_map: Dict[str, Dir | File] = construct_directory_tree(data)
 
-    return total_score
+    current_unused_space = TOTAL_DISK_SPACE - dir_file_map["/"].size
+    dir_sizes: Generator[int, None, None] = (
+        dir.size
+        for dir in dir_file_map.values()
+        if dir.type == "dir" and dir.size > REQUIRED_UNUSED_SPACE - current_unused_space
+    )
+
+    return min(dir_sizes)
 
 
 def solve_puzzle(puzzle_input):
