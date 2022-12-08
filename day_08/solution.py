@@ -1,6 +1,6 @@
 import sys
 from pathlib import Path
-from typing import Any, List, Tuple
+from typing import Tuple
 
 import numpy as np
 
@@ -66,12 +66,50 @@ def find_trees_visible(matrix: np.ndarray) -> Tuple[int, int]:
 def solve_part_2(puzzle_input_file_path: Path) -> int:
     """
     Solve part 2:
+    Consider each tree on your map. What is the highest scenic score possible for any tree?
     """
 
-    data: np.ndarray = parse_input(puzzle_input_file_path)
-    n_trees_visible: int = 0
+    matrix: np.ndarray = parse_input(puzzle_input_file_path)
+    highest_sceninc_score: int = calc_highest_scenic_score(matrix)
 
-    return n_trees_visible
+    return highest_sceninc_score
+
+
+def calc_highest_scenic_score(matrix: np.ndarray) -> int:
+
+    nrows: int = matrix.shape[0]
+    ncols: int = matrix.shape[1]
+
+    highest_scenic_score: int = 0
+
+    # loop through trees inside the edge
+    for x in range(1, nrows - 1):
+        for y in range(1, ncols - 1):
+            tree_height = matrix[x, y]
+            # get the threes in the top, down, left, right directions
+            top: np.ndarray = np.flip(matrix[0:x, y])
+            bottom: np.ndarray = matrix[x + 1 : nrows, y]
+            left: np.ndarray = np.flip(matrix[x, 0:y])
+            right: np.ndarray = matrix[x, y + 1 : ncols]
+
+            # check if it's visible in any direction
+            # - all the trees in one direction are shorter than the current tree
+            scenic_score = 1
+            for direction in [top, bottom, left, right]:
+                viewing_distance = 0
+                for i in direction:
+                    viewing_distance += 1
+                    if i >= tree_height:
+                        break
+                scenic_score = scenic_score * viewing_distance
+
+            highest_scenic_score = (
+                scenic_score
+                if scenic_score > highest_scenic_score
+                else highest_scenic_score
+            )
+
+    return highest_scenic_score
 
 
 def solve_puzzle(puzzle_input_file_path: Path):
