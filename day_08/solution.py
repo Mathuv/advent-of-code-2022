@@ -27,6 +27,7 @@ def parse_input(puzzle_input_file_path: Path) -> np.ndarray:
 def solve_part_1(puzzle_input_file_path: Path) -> int:
     """
     Solve part 1:
+    Consider your map; how many trees are visible from outside the grid?
     """
 
     matrix: np.ndarray = parse_input(puzzle_input_file_path)
@@ -66,7 +67,8 @@ def find_trees_visible(matrix: np.ndarray) -> Tuple[int, int]:
 def solve_part_2(puzzle_input_file_path: Path) -> int:
     """
     Solve part 2:
-    Consider each tree on your map. What is the highest scenic score possible for any tree?
+    Consider each tree on your map.
+    What is the highest scenic score possible for any tree?
     """
 
     matrix: np.ndarray = parse_input(puzzle_input_file_path)
