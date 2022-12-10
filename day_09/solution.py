@@ -1,10 +1,12 @@
-import sys
 import math
+import sys
 from copy import deepcopy
 from pathlib import Path
-from typing import Tuple, List
+from typing import List
 
 import numpy as np
+
+# TODO: refactor for redability
 
 
 def parse_input(puzzle_input_file_path: Path) -> List[str]:
@@ -90,9 +92,6 @@ def create_grid(motions: List[str]) -> np.ndarray:
             # move 'H' right
             grid[r, c - distance] = "H"
 
-            # print(item)
-            # print(grid)
-
     # Replace 'H' with ' '
     grid[grid == "H"] = " "
 
@@ -127,34 +126,39 @@ def move_H(grid_H, direction, distance):
     # Clear the starting positon of H
     grid_H[r, c] = "-"
 
-    return grid_H, r, c
+    return grid_H
 
 
-def move_T(grid_T, grid_H, grid_trail_T, r, c):
+def move_knot(grid, grid_H, grid_trail_T=None, current_knot=None, previous_knot=None):
 
     # current cordinates of H
-    rh, ch = np.where(grid_H == "H")
+    rh, ch = np.where(grid_H == previous_knot)
     rh = rh[0]
     ch = ch[0]
 
     # current cordinates of T
-    rt, ct = np.where(grid_T == "T")
+    rt, ct = np.where(grid == current_knot)
     rt = rt[0]
     ct = ct[0]
 
     # mark the current position T on trail
-    grid_trail_T[rt, ct] = "#"
+    if current_knot == "T" and grid_trail_T is not None:
+        grid_trail_T[rt, ct] = "#"
 
     # Calculate Euclidean distance
     distance_T_H = math.dist((rh, ch), (rt, ct))
     if distance_T_H >= 2:
+        rt_new = (rh + rt) // 2 if abs(rh - rt) == 2 else rh
+        ct_new = (ch + ct) // 2 if abs(ch - ct) == 2 else ch
         # Move T adjacent to H
-        grid_T[r, c] = "T"
+        grid[rt_new, ct_new] = current_knot
         # mark the new positon of T on trail
-        grid_trail_T[r, c] = "#"
-        grid_T[rt, ct] = "-"
+        if current_knot == "T" and grid_trail_T is not None:
+            grid_trail_T[rt_new, ct_new] = "#"
 
-    return grid_T, grid_trail_T
+        grid[rt, ct] = "-"
+
+    return grid, grid_trail_T
 
 
 def solve_part_1(puzzle_input_file_path: Path) -> int:
@@ -170,22 +174,16 @@ def solve_part_1(puzzle_input_file_path: Path) -> int:
     grid_trail_T = deepcopy(grid_H)
     grid_H[grid_H == "S"] = "H"
     grid_T[grid_T == "S"] = "T"
-    # print(f"Grid H:\n{grid_H}")
-    # print(f"Grid T:\n{grid_T}")
-    # print(f"Grid Trail T:\n{grid_trail_T}")
 
     for motion in motions:
         direction, distance = tuple(motion.split(" "))  # 'U 4'
         distance = int(distance)
-        # print(motion)
-        for i in range(distance):
-            grid_H, r, c = move_H(grid_H, direction, 1)
-            # print(grid_H)
-            grid_T, grid_trail_T = move_T(grid_T, grid_H, grid_trail_T, r, c)
-            # print(grid_T)
-            # print(grid_trail_T)
+        for _ in range(distance):
+            grid_H = move_H(grid_H, direction, 1)
+            grid_T, grid_trail_T = move_knot(grid_T, grid_H, grid_trail_T, "T", "H")
 
-    grid_trail_T[grid_trail_T == "S"] = "#"
+    if grid_trail_T is not None:
+        grid_trail_T[grid_trail_T == "S"] = "#"
     return np.count_nonzero(grid_trail_T == "#")
 
 
@@ -194,9 +192,40 @@ def solve_part_2(puzzle_input_file_path: Path) -> int:
     Solve part 2:
     """
 
-    motions: List[str] = parse_input(puzzle_input_file_path)
+    knots = ["H", "1", "2", "3", "4", "5", "6", "7", "8", "T"]
+    grids_map = {}
 
-    return 0
+    motions: List[str] = parse_input(puzzle_input_file_path)
+    grid_template = create_grid(motions)
+
+    for current_knot in knots:
+        grid = deepcopy(grid_template)
+        grid[grid == "S"] = current_knot
+        grids_map[current_knot] = grid
+
+    grid_trail_T = deepcopy(grid_template)
+
+    for motion in motions:
+        direction, distance = tuple(motion.split(" "))  # 'U 4'
+        distance = int(distance)
+        for i in range(distance):
+            grid_H = grids_map["H"]
+            grid_H = move_H(grid_H, direction, 1)
+            for i, current_knot in enumerate(knots[1:]):
+                current_knot_grid = grids_map[current_knot]
+                previous_knot = knots[i]
+                previous_knot_grid = grids_map[previous_knot]
+                current_knot_grid, grid_trail_T = move_knot(
+                    current_knot_grid,
+                    previous_knot_grid,
+                    grid_trail_T,
+                    current_knot,
+                    previous_knot,
+                )
+
+    if grid_trail_T is not None:
+        grid_trail_T[grid_trail_T == "S"] = "#"
+    return np.count_nonzero(grid_trail_T == "#")
 
 
 def solve_puzzle(puzzle_input_file_path: Path):
