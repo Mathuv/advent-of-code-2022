@@ -1,3 +1,5 @@
 advent-of-code-data
 pandas
 pytest
+numpy
+networkx
