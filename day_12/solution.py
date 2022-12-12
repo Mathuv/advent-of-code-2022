@@ -57,10 +57,13 @@ def create_directed_graph(grid: np.ndarray) -> nx.DiGraph:
 
 
 def find_shortest_path(grid: np.ndarray) -> int:
+
+    # source node
     r, c = np.where(grid == "S")
     source_node: Tuple[int, int] = (r[0], c[0])
     grid[grid == "S"] = "a"
 
+    # target node
     r, c = np.where(grid == "E")
     target_node: Tuple[int, int] = r[0], c[0]
     grid[grid == "E"] = "z"
@@ -85,14 +88,39 @@ def solve_part_1(puzzle_input_file_path: Path) -> int:
     return find_shortest_path(grid)
 
 
+def find_shortest_path_from_letter(grid: np.ndarray, letter="a") -> int:
+
+    grid[grid == "S"] = "a"
+
+    # source nodes
+    locations = np.where(grid == "a")
+    source_nodes = list(zip(locations[0], locations[1]))
+
+    # target node
+    r, c = np.where(grid == "E")
+    target_node: Tuple[int, int] = r[0], c[0]
+    grid[grid == "E"] = "z"
+
+    print(f"source_node: {source_nodes}")
+    print(f"destination_node: {target_node}")
+
+    G = create_directed_graph(grid)
+
+    lengths = nx.single_target_shortest_path_length(G, target_node)
+
+    return min(x[1] for x in lengths if x[0] in source_nodes)
+
+
 def solve_part_2(puzzle_input_file_path: Path) -> int:
     """
     Solve part 2:
+    What is the fewest steps required to move starting from
+    any square with elevation a to the location that should get the best signal?
     """
 
     grid: np.ndarray = parse_input(puzzle_input_file_path)
 
-    return 0
+    return find_shortest_path_from_letter(grid=grid, letter="a")
 
 
 def solve_puzzle(puzzle_input_file_path: Path):
