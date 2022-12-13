@@ -1,12 +1,16 @@
 import sys
 from pathlib import Path
-from typing import List
+from typing import List, Any
 
 
-def parse_input(puzzle_input_file_path: Path) -> List[str]:
+def parse_input(puzzle_input_file_path: Path) -> List[List[Any]]:
     """Parse input data."""
 
-    return puzzle_input_file_path.read_text().strip().splitlines()
+    text: str = puzzle_input_file_path.read_text().strip()
+    # replace '\n\n' with '|' and '\n' with ','
+    text = text.replace("\n\n", "|").replace("\n", ",")
+    pairs = text.split("|")
+    return [list(eval(x)) for x in pairs]
 
 
 def solve_part_1(puzzle_input_file_path: Path) -> int:
