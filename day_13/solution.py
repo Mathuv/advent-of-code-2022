@@ -2,6 +2,9 @@ import sys
 from pathlib import Path
 from typing import Any, List, Tuple
 
+import numpy as np
+from icecream import ic
+
 
 def parse_input(puzzle_input_file_path: Path) -> List[Tuple[List[Any], List[Any]]]:
     """
@@ -48,11 +51,11 @@ def find_packet_pairs_in_order(packet_pairs: List[Tuple[List[Any], List[Any]]]):
 
     for i, pair in enumerate(packet_pairs):
         left, right = pair
-        print(f"index: {i+1}, left: {left}, right: {right}")
+        # print(f"index: {i+1}, left: {left}, right: {right}")
         if is_ordered(left, right) is True:
             index_in_packet_pairs = i + 1
             pairs_in_order.append(index_in_packet_pairs)
-        print(f"pairs in order: {pairs_in_order}")
+        # print(f"pairs in order: {pairs_in_order}")
     return pairs_in_order
 
 
@@ -82,7 +85,7 @@ def is_ordered(left, right):
             if len(left) > 0 and len(right) > 0:
                 # recursive
                 for i, pair in enumerate(zip(left, right)):
-                    print(f"(new) left: {pair[0]} , rgt: {pair[1]}")
+                    # print(f"(new) left: {pair[0]} , rgt: {pair[1]}")
                     remainder_left = left[i + 1 :]
                     remainder_right = right[i + 1 :]
                     ordered = is_ordered(pair[0], pair[1])
@@ -118,16 +121,64 @@ def solve_part_1(puzzle_input_file_path: Path) -> int:
     return sum(find_packet_pairs_in_order(packet_pairs))
 
 
+def find_decoder_key(packet_pairs: List[Tuple[List[Any], List[Any]]]) -> int:
+
+    divider_pkt_1 = [[2]]
+    divider_pk2_2 = [[6]]
+
+    # make a 1-D array out of packet_pairs
+    packets = np.array(packet_pairs, dtype=object).flatten()
+    # ic("before sorted: ", packets)
+
+    # sort packets
+    sorted_packets = sort_packets(packets)
+    # ic(sorted_packets)
+
+    # convert sorted_packets to python list
+    # ('where' on ndarray for an array/list object doeesn't seem to work as intended)
+    sorted_packets_l: List[Any] = sorted_packets.tolist()
+
+    # calculate the decoder_key
+    divider_pkt_1_pos: int = sorted_packets_l.index(divider_pkt_1) + 1
+    divider_pkt_2_pos: int = sorted_packets_l.index(divider_pk2_2) + 1
+
+    return divider_pkt_1_pos * divider_pkt_2_pos
+
+
+def sort_packets(packets: np.ndarray) -> np.ndarray:
+    """Does a bubble sort."""
+
+    # create a copy of packets
+    sorted_packets = np.copy(packets)
+
+    # sort packets
+    for i in range(len(sorted_packets)):
+        for j in range(len(sorted_packets) - 1):
+            if is_ordered(sorted_packets[j], sorted_packets[j + 1]) is False:
+                sorted_packets[j], sorted_packets[j + 1] = (
+                    sorted_packets[j + 1],
+                    sorted_packets[j],
+                )
+
+    return sorted_packets
+
+
 def solve_part_2(puzzle_input_file_path: Path) -> int:
     """
     Solve part 2:
+    Organize all of the packets into the correct order.
+    What is the decoder key for the distress signal?
     """
 
     packet_pairs: List[Tuple[List[Any], List[Any]]] = parse_input(
         puzzle_input_file_path
     )
+    # ic(packet_pairs)
+    divider_pkt_1 = [[2]]
+    divider_pk2_2 = [[6]]
+    packet_pairs.append((divider_pkt_1, divider_pk2_2))
 
-    return 0
+    return find_decoder_key(packet_pairs)
 
 
 def solve_puzzle(puzzle_input_file_path: Path):
