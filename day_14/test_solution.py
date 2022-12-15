@@ -12,11 +12,13 @@ def example_data() -> pathlib.Path:
     return PUZZLE_DIR / "example.txt"
 
 
-@pytest.mark.skip("Not implemented yet")
 def test_parse_example(example_data):
     """Test parsing example."""
     parsed_data = sol.parse_input(example_data)
-    assert parsed_data == ...
+    assert parsed_data == [
+        [(4, 498), (6, 498), (6, 496)],
+        [(4, 503), (4, 502), (9, 502), (9, 494)],
+    ]
 
 
 @pytest.mark.skip("Not implemented yet")

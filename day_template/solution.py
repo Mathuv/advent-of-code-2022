@@ -6,7 +6,9 @@ from typing import List
 def parse_input(puzzle_input_file_path: Path) -> List[str]:
     """Parse input data."""
 
-    return puzzle_input_file_path.read_text().strip().splitlines()
+    text = puzzle_input_file_path.read_text().strip()
+
+    return text.splitlines()
 
 
 def solve_part_1(puzzle_input_file_path: Path) -> int:
@@ -30,7 +32,9 @@ def solve_part_2(puzzle_input_file_path: Path) -> int:
 
 
 def solve_puzzle(puzzle_input_file_path: Path):
-    """Solve the Advent of Code puzzle of the day."""
+    """
+    Solve the Advent of Code puzzle of the day.
+    """
 
     solution_1 = solve_part_1(puzzle_input_file_path)
     solution_2 = solve_part_2(puzzle_input_file_path)
