@@ -1,8 +1,10 @@
 import sys
 from pathlib import Path
+from pprint import pprint
 from typing import List, Tuple
 
 import numpy as np
+from icecream import ic
 
 # np.set_printoptions(threshold=sys.maxsize)
 
@@ -27,11 +29,17 @@ def parse_input(puzzle_input_file_path: Path) -> List[List[Tuple[int, int]]]:
 
     return scans
 
-
-def create_grid(scans: List[List[Tuple[int, int]]]) -> np.ndarray:
+# TODO: refactor the function
+def create_grid(
+    scans: List[List[Tuple[int, int]]], floor_at_bottom: bool = False
+) -> np.ndarray:
     """
     Crate just enough size of the numpy array to accomodate cordinates in the scans
     """
+
+    # FIXME: possibly grid size can be dynamically adjusted using np.roll
+    # instead of trying to determine the size based on the input.
+    # in that way it could lead to  more redable code
 
     # find min_row, max_row and min_col and max_col from scans for numpy array
     min_row = 0
@@ -39,19 +47,46 @@ def create_grid(scans: List[List[Tuple[int, int]]]) -> np.ndarray:
     min_col = min(min(c[1] for c in scan) for scan in scans)
     max_col = max(max(c[1] for c in scan) for scan in scans)
 
-    rows = max_row - min_row + 1
-    cols = max_col - min_col + 1
+    if floor_at_bottom:
+        max_row += 2  # Infinite floor is 2 tiles down the lowest rock path
+        max_floor_length: int = 2 * (max_row + 2) - 1  # n'th odd number = 2n - 1
+        min_col = (
+            min_col
+            if (500 - min_col) >= max_floor_length // 2
+            else (500 - max_floor_length // 2)
+        )
+        max_col = (
+            max_col
+            if (max_col - 500) >= max_floor_length // 2
+            else (500 + max_floor_length // 2)
+        )
+
+    rows = (max_row - min_row) + 1
+    cols = (max_col - min_col) + 1
+
 
     # Draw the grid of air
     grid: np.ndarray = np.full((rows, cols), AIR)
+    ic(grid.shape)
+    # ic('\n', grid)
+    pprint(grid)
 
     # Draw rock lines
     row_idx = np.array([], dtype=int)
     col_idx = np.array([], dtype=int)
     prev_point_r = 0
     prev_point_c = 0
+
+    # Add floor at the bottom(rock line) to scans
+    if floor_at_bottom:
+        scans.append([(rows - 1, min_col), (rows - 1, max_col)])
+        # scans.append([(grid.shape[0] - 1, 0), (grid.shape[0] - 1, grid.shape[1] - 1)])
+
     for rock_line in scans:
         for i, point in enumerate(rock_line):
+            ic(point)
+            ic(min_row)
+            ic(min_col)
             current_point_r = point[0] - min_row
             current_point_c = point[1] - min_col
 
@@ -82,16 +117,26 @@ def create_grid(scans: List[List[Tuple[int, int]]]) -> np.ndarray:
             prev_point_r = current_point_r
             prev_point_c = current_point_c
 
+        ic(rock_line)
+        ic(row_idx)
+        ic(col_idx)
+
     grid[row_idx, col_idx] = ROCK  # #
 
     # Draw the source of sand
     grid[0, 500 - min_col] = SAND_SOURCE  # +
+    ic(grid)
 
     return grid
 
 
 def simulate_sand_fall(grid) -> bool:
-    # Simulate sand falling among the rocks
+    """Simulate sand falling among the rocks"""
+
+    if SAND_SOURCE not in grid:
+        ic("Souce is occupied")
+        return False
+
     # Find the source of sand
     sand_source_pos = np.where(grid == SAND_SOURCE)
     sand_pos = sand_source_pos
@@ -106,6 +151,7 @@ def simulate_sand_fall(grid) -> bool:
             if sand_pos[1] in [0, grid.shape[1] - 1]:
                 # if the sand has reached the edges of the
                 # grid they fall off into the void
+                ic("Free fall started")
                 return False
             elif grid[sand_pos[0] + 1, sand_pos[1] - 1] == AIR:
                 # else if space available move down left
@@ -120,16 +166,19 @@ def simulate_sand_fall(grid) -> bool:
                 return True
 
 
-def find_no_of_sands(scans):
+def find_no_of_sands(
+    scans: List[List[Tuple[int, int]]], floor_at_the_bottom: bool = False
+) -> int:
 
     # Initialize the grid
-    grid: np.ndarray = create_grid(scans)
+    grid: np.ndarray = create_grid(scans, floor_at_the_bottom)
 
     no_of_sands = 0
 
     while True:
         at_rest: bool = simulate_sand_fall(grid)
-        # Free fall into the void
+        # break when first sand freefalls into the void
+        # or sand source is occcupied by a resting sand
         if not at_rest:
             break
         no_of_sands += 1
@@ -156,7 +205,7 @@ def solve_part_2(puzzle_input_file_path: Path) -> int:
 
     scans: List[List[Tuple[int, int]]] = parse_input(puzzle_input_file_path)
 
-    return 0
+    return find_no_of_sands(scans=scans, floor_at_the_bottom=True)
 
 
 def solve_puzzle(puzzle_input_file_path: Path):
