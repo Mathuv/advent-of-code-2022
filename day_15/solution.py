@@ -6,9 +6,16 @@ from typing import List
 def parse_input(puzzle_input_file_path: Path) -> List[str]:
     """Parse input data."""
 
-    text = puzzle_input_file_path.read_text().strip()
+    text: str = puzzle_input_file_path.read_text().strip()
+    # Remove unwanted strings form text
+    text: str = (
+        text.replace("Sensor at x=", "")
+        .replace("y=", "")
+        .replace(" closest beacon is at x=", "")
+    )
+    positions = [[eval(pos) for pos in line.split(":")] for line in text.splitlines()]
 
-    return text.splitlines()
+    return positions
 
 
 def solve_part_1(puzzle_input_file_path: Path) -> int:
