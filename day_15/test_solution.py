@@ -2,6 +2,7 @@ import pathlib
 
 import pytest
 import solution as sol
+import matplotlib.pyplot as plt
 from icecream import ic
 
 PUZZLE_DIR = pathlib.Path(__file__).parent
@@ -37,7 +38,10 @@ def test_parse_example(example_data):
 
 def test_part_1_example(example_data):
     """Test part 1 of the puzzle using the data example."""
-    assert sol.solve_part_1(example_data, 10) == 26
+    result = sol.solve_part_1(example_data, 10)
+    # assert sol.solve_part_1(example_data, 10) == 26
+    plt.show()
+    assert result == 26
 
 
 @pytest.mark.skip("Not implemented yet")
