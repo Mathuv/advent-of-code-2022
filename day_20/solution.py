@@ -1,25 +1,32 @@
 import sys
 from pathlib import Path
-from typing import List
+from typing import List, Tuple
+from icecream import ic
 
 
-def parse_input(puzzle_input_file_path: Path) -> List[str]:
+def parse_input(puzzle_input_file_path: Path) -> List[int]:
     """Parse input data."""
 
     text = puzzle_input_file_path.read_text().strip()
 
-    return text.splitlines()
+    return [int(line) for line in text.splitlines()]
+
+
+def get_sum_of_three_numbers(coordinates: List[int]) -> int:
+
+    return 0
 
 
 def solve_part_1(puzzle_input_file_path: Path) -> int:
     """
     Solve part 1:
-    Mix your encrypted file exactly once. **What is the sum of the three numbers that form the grove coordinates?**
+    Mix your encrypted file exactly once. **What is the sum of
+    the three numbers that form the grove coordinates?**
     """
 
-    data: List[str] = parse_input(puzzle_input_file_path)
+    coordinates: List[int] = parse_input(puzzle_input_file_path)
 
-    return 0
+    return get_sum_of_three_numbers(coordinates)
 
 
 def solve_part_2(puzzle_input_file_path: Path) -> int:
@@ -27,7 +34,7 @@ def solve_part_2(puzzle_input_file_path: Path) -> int:
     Solve part 2:
     """
 
-    data: List[str] = parse_input(puzzle_input_file_path)
+    coordinates: List[int] = parse_input(puzzle_input_file_path)
 
     return 0
 
