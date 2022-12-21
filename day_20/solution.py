@@ -1,7 +1,7 @@
 import sys
 from pathlib import Path
 from typing import List, Tuple
-from icecream import ic
+from collections import deque
 
 
 def parse_input(puzzle_input_file_path: Path) -> List[int]:
@@ -14,7 +14,29 @@ def parse_input(puzzle_input_file_path: Path) -> List[int]:
 
 def get_sum_of_three_numbers(coordinates: List[int]) -> int:
 
-    return 0
+    # Create a list of tuples (indexed coordinates)
+    i_cordinates: List[Tuple[int, int]] = list(enumerate(coordinates))
+
+    # create a deque
+    i_cordinates_deque: deque = deque(i_cordinates)
+
+    # loop through the coordinates and move the numbers around
+    for coord in i_cordinates:
+        fr_index = i_cordinates_deque.index(coord)
+        # remove the item
+        i_cordinates_deque.remove(coord)
+        # calculate to index
+        to_index = (fr_index + coord[1]) % (len(i_cordinates) - 1)
+        # insert at to_index
+        i_cordinates_deque.insert(to_index, coord)
+
+    idx_zero = i_cordinates_deque.index((coordinates.index(0), 0))
+
+    return (
+        i_cordinates_deque[(idx_zero + 1000) % len(i_cordinates)][1]
+        + i_cordinates_deque[(idx_zero + 2000) % len(i_cordinates)][1]
+        + i_cordinates_deque[(idx_zero + 3000) % len(i_cordinates)][1]
+    )
 
 
 def solve_part_1(puzzle_input_file_path: Path) -> int:
