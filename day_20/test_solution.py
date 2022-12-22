@@ -32,7 +32,10 @@ def test_part_1_example(example_data):
     assert result == 3
 
 
-@pytest.mark.skip("Not implemented yet")
 def test_part_2_example(example_data):
     """Test part 2 of the puzzle using the data example."""
-    assert sol.solve_part_2(example_data) == ...
+    start_time = time.time()
+    result = sol.solve_part_2(example_data)
+    elapsed_time = (time.time() - start_time) * 1000
+    ic(elapsed_time)
+    assert result == 1623178306
